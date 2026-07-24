@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useExpenses } from "../context/ExpenseContext";
+import { fetchUsdRateFromInr } from "../services/api";
 import { Expense } from "../types/Expense";
 import { formatCurrency } from "../utils/currency";
 
@@ -19,6 +20,37 @@ interface ExpenseSummary {
 
 export default function StatisticsScreen() {
   const { expenses } = useExpenses();
+  const [usdRate, setUsdRate] = useState<number | null>(null);
+  const [isRateLoading, setIsRateLoading] = useState(true);
+  const [rateError, setRateError] = useState("");
+
+  useEffect(() => {
+    let isActive = true;
+
+    const loadUsdRate = async () => {
+      try {
+        const nextUsdRate = await fetchUsdRateFromInr();
+        if (isActive) {
+          setUsdRate(nextUsdRate);
+        }
+      } catch {
+        if (isActive) {
+          setRateError("Unable to load the current USD exchange rate.");
+        }
+      } finally {
+        if (isActive) {
+          setIsRateLoading(false);
+        }
+      }
+    };
+
+    void loadUsdRate();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
   const summary = useMemo<ExpenseSummary | null>(() => {
     if (expenses.length === 0) {
       return null;
@@ -47,6 +79,7 @@ export default function StatisticsScreen() {
         <View style={styles.emptyCard}>
           <Text style={styles.emptyTitle}>No spending data yet</Text>
           <Text style={styles.emptyText}>Add an expense to see a clear breakdown of your spending.</Text>
+          <ExchangeRateCard usdRate={usdRate} isLoading={isRateLoading} error={rateError} />
         </View>
       </View>
     );
@@ -63,6 +96,8 @@ export default function StatisticsScreen() {
         <Text style={styles.primaryLabel}>TOTAL AMOUNT SPENT</Text>
         <Text style={styles.primaryAmount}>{formatCurrency(summary.totalAmount)}</Text>
       </View>
+
+      <ExchangeRateCard usdRate={usdRate} isLoading={isRateLoading} error={rateError} />
 
       <View style={styles.grid}>
         <StatCard label="Total expenses" value={String(expenses.length)} />
@@ -103,11 +138,23 @@ function StatCard({ label, value, detail }: { label: string; value: string; deta
   );
 }
 
+function ExchangeRateCard({ usdRate, isLoading, error }: { usdRate: number | null; isLoading: boolean; error: string }) {
+  return (
+    <View style={styles.exchangeCard}>
+      <Text style={styles.exchangeLabel}>CURRENT EXCHANGE RATE</Text>
+      {isLoading ? <ActivityIndicator color="#4F46E5" style={styles.exchangeLoading} /> : null}
+      {!isLoading && error ? <Text style={styles.exchangeError}>{error}</Text> : null}
+      {!isLoading && !error && usdRate !== null ? <Text style={styles.exchangeValue}>1 INR = {usdRate.toFixed(4)} USD</Text> : null}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: { backgroundColor: "#F8FAFC", flex: 1 }, content: { padding: 20, paddingBottom: 36 },
   title: { color: "#0F172A", fontSize: 25, fontWeight: "800" }, subtitle: { color: "#64748B", fontSize: 14, lineHeight: 21, marginTop: 6 },
   primaryCard: { backgroundColor: "#4F46E5", borderRadius: 22, marginTop: 24, padding: 22 }, primaryLabel: { color: "#C7D2FE", fontSize: 12, fontWeight: "800", letterSpacing: 0.7 }, primaryAmount: { color: "#FFFFFF", fontSize: 32, fontWeight: "800", marginTop: 6 },
+  exchangeCard: { backgroundColor: "#FFFFFF", borderRadius: 16, marginTop: 16, padding: 16 }, exchangeLabel: { color: "#64748B", fontSize: 10, fontWeight: "800", letterSpacing: 0.45 }, exchangeLoading: { alignSelf: "flex-start", marginTop: 10 }, exchangeValue: { color: "#0F172A", fontSize: 17, fontWeight: "800", marginTop: 8 }, exchangeError: { color: "#DC2626", fontSize: 13, lineHeight: 19, marginTop: 8 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 16 }, statCard: { backgroundColor: "#FFFFFF", borderRadius: 16, flexGrow: 1, flexBasis: "46%", minWidth: 145, padding: 15 }, statLabel: { color: "#64748B", fontSize: 10, fontWeight: "800", letterSpacing: 0.45 }, statValue: { color: "#0F172A", fontSize: 18, fontWeight: "800", marginTop: 8 }, statDetail: { color: "#64748B", fontSize: 12, marginTop: 5 },
   sectionTitle: { color: "#0F172A", fontSize: 18, fontWeight: "800", marginBottom: 12, marginTop: 26 }, categoryCard: { backgroundColor: "#FFFFFF", borderRadius: 18, padding: 16 }, categoryRow: { marginBottom: 17 }, categoryHeading: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }, categoryName: { color: "#334155", fontSize: 14, fontWeight: "700" }, categoryAmount: { color: "#0F172A", fontSize: 14, fontWeight: "800" }, track: { backgroundColor: "#E2E8F0", borderRadius: 99, height: 8, overflow: "hidden" }, bar: { backgroundColor: "#6366F1", borderRadius: 99, height: "100%" },
-  emptyContainer: { alignItems: "center", backgroundColor: "#F8FAFC", flex: 1, justifyContent: "center", padding: 20 }, emptyCard: { alignItems: "center", backgroundColor: "#FFFFFF", borderRadius: 18, maxWidth: 420, padding: 28 }, emptyTitle: { color: "#0F172A", fontSize: 19, fontWeight: "800" }, emptyText: { color: "#64748B", fontSize: 14, lineHeight: 21, marginTop: 8, textAlign: "center" },
+  emptyContainer: { alignItems: "center", backgroundColor: "#F8FAFC", flex: 1, justifyContent: "center", padding: 20 }, emptyCard: { alignItems: "center", backgroundColor: "#FFFFFF", borderRadius: 18, maxWidth: 420, padding: 28, width: "100%" }, emptyTitle: { color: "#0F172A", fontSize: 19, fontWeight: "800" }, emptyText: { color: "#64748B", fontSize: 14, lineHeight: 21, marginTop: 8, textAlign: "center" },
 });
