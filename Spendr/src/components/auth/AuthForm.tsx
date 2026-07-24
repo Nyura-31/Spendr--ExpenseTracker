@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   container: { alignItems: "center", backgroundColor: "#F8FAFC", flex: 1, justifyContent: "center", padding: 24 },
   card: { backgroundColor: "#FFFFFF", borderRadius: 22, maxWidth: 420, padding: 24, shadowColor: "#0F172A", shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.1, shadowRadius: 16, width: "100%", elevation: 4 },
   brand: { color: "#4F46E5", fontSize: 18, fontWeight: "800", marginBottom: 20 }, title: { color: "#0F172A", fontSize: 26, fontWeight: "800" }, subtitle: { color: "#64748B", fontSize: 15, lineHeight: 22, marginBottom: 24, marginTop: 8 },
-  input: { borderColor: "#CBD5E1", borderRadius: 12, borderWidth: 1, color: "#0F172A", fontSize: 16, marginBottom: 12, paddingHorizontal: 14, paddingVertical: 13 },
+  input: { backgroundColor: "#F8FAFC", borderColor: "#CBD5E1", borderRadius: 14, borderWidth: 1, color: "#0F172A", fontSize: 16, marginBottom: 12, paddingHorizontal: 14, paddingVertical: 13 },
   error: { color: "#DC2626", fontSize: 13, lineHeight: 19, marginBottom: 12 }, primaryButton: { alignItems: "center", backgroundColor: "#4F46E5", borderRadius: 12, marginTop: 4, minHeight: 50, justifyContent: "center", paddingHorizontal: 16 }, disabledButton: { opacity: 0.65 }, primaryText: { color: "#FFFFFF", fontSize: 16, fontWeight: "800" },
   switchButton: { alignItems: "center", marginTop: 18, padding: 8 }, switchText: { color: "#4F46E5", fontSize: 14, fontWeight: "700" },
 });
