@@ -15,6 +15,23 @@ type FormErrors = Partial<Record<keyof FormValues, string>>;
 const categories = ["Food", "Transport", "Bills", "Entertainment", "Shopping", "Health", "Other"];
 const today = new Date().toISOString().slice(0, 10);
 
+function isValidDate(date: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+
+  if (!match) {
+    return false;
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const calendarDate = new Date(year, month - 1, day);
+
+  return calendarDate.getFullYear() === year
+    && calendarDate.getMonth() === month - 1
+    && calendarDate.getDate() === day;
+}
+
 export function ExpenseForm({ initialValues, submitLabel, onSubmit, onCancel }: ExpenseFormProps) {
   const [values, setValues] = useState<FormValues>({ title: initialValues?.title ?? "", amount: initialValues ? String(initialValues.amount) : "", category: initialValues?.category ?? "Food", date: initialValues?.date ?? today, notes: initialValues?.notes ?? "" });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -27,11 +44,10 @@ export function ExpenseForm({ initialValues, submitLabel, onSubmit, onCancel }: 
   const handleSubmit = () => {
     const nextErrors: FormErrors = {};
     const amount = Number(values.amount);
-    const parsedDate = new Date(`${values.date}T00:00:00`);
     if (!values.title.trim()) nextErrors.title = "Enter an expense title.";
     if (!Number.isFinite(amount) || amount <= 0) nextErrors.amount = "Enter an amount greater than zero.";
     if (!values.category) nextErrors.category = "Choose a category.";
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(values.date) || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== values.date) nextErrors.date = "Use a valid YYYY-MM-DD date.";
+    if (!isValidDate(values.date)) nextErrors.date = "Use a valid YYYY-MM-DD date.";
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
     onSubmit({ title: values.title.trim(), amount, category: values.category, date: values.date, notes: values.notes.trim() });

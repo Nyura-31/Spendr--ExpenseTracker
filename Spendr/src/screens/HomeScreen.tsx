@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, FlatList, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { ExpenseCard } from "../components/expense/ExpenseCard";
 import { useExpenses } from "../context/ExpenseContext";
 import EditExpenseScreen from "./EditExpenseScreen";
@@ -11,12 +11,29 @@ export default function HomeScreen() {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
 
-  const confirmDelete = (expense: Expense) => {
-    Alert.alert("Delete expense?", `Remove “${expense.title}” from your expenses?`, [
-      { text: "Cancel", style: "cancel" },
-      { text: "Delete", style: "destructive", onPress: () => deleteExpense(expense.id) },
-    ]);
+  const handleDelete = async (id: string) => {
+    await deleteExpense(id);
   };
+
+  const confirmDelete = (expense: Expense) => {
+    if (Platform.OS === "web") {
+      if (window.confirm(`Remove "${expense.title}" from your expenses?`)) {
+        void handleDelete(expense.id);
+      }
+
+      return;
+    }
+
+  handleDelete(expense.id);
+};
+
+//   const confirmDelete = (expense: Expense) => {
+//     Alert.alert("Delete expense?", `Remove “${expense.title}” from your expenses?`, [
+//       { text: "Cancel", style: "cancel" },
+//       { text: "Delete", style: "destructive", onPress: () => void handleDelete(expense.id) },
+//     ]);
+//   };
+
 
   if (editingExpense) {
     return <EditExpenseScreen expense={editingExpense} onDone={() => setEditingExpense(null)} />;
@@ -31,6 +48,7 @@ export default function HomeScreen() {
       <Text style={styles.sectionTitle}>Recent expenses</Text>
       <FlatList
         data={expenses}
+        extraData={expenses}
         keyExtractor={(expense) => expense.id}
         renderItem={({ item }) => <ExpenseCard expense={item} onEdit={setEditingExpense} onDelete={confirmDelete} />}
         contentContainerStyle={expenses.length === 0 ? styles.emptyList : styles.list}
