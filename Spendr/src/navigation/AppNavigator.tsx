@@ -13,8 +13,12 @@ export default function AppNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerTitleAlign: "center",
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: "#F8FAFC" },
+        headerTitleStyle: { color: "#0F172A", fontSize: 17, fontWeight: "800" },
         tabBarActiveTintColor: "#4F46E5",
         tabBarInactiveTintColor: "#64748B",
+        tabBarStyle: { borderTopColor: "#E2E8F0", height: 64, paddingBottom: 7, paddingTop: 6 },
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap = "home";
 

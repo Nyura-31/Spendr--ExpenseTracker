@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Alert, FlatList, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { ExpenseCard } from "../components/expense/ExpenseCard";
 import { useExpenses } from "../context/ExpenseContext";
 import EditExpenseScreen from "./EditExpenseScreen";
@@ -42,6 +43,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.summary}>
+        <View style={styles.summaryAccent}><Ionicons color="#FFFFFF" name="wallet-outline" size={21} /></View>
         <View><Text style={styles.summaryLabel}>TOTAL SPENT</Text><Text style={styles.totalAmount}>{formatCurrency(totalAmount)}</Text></View>
         <View style={styles.countBadge}><Text style={styles.count}>{expenses.length}</Text><Text style={styles.countLabel}>expenses</Text></View>
       </View>
@@ -52,7 +54,7 @@ export default function HomeScreen() {
         keyExtractor={(expense) => expense.id}
         renderItem={({ item }) => <ExpenseCard expense={item} onEdit={setEditingExpense} onDelete={confirmDelete} />}
         contentContainerStyle={expenses.length === 0 ? styles.emptyList : styles.list}
-        ListEmptyComponent={<View style={styles.emptyState}><Text style={styles.emptyTitle}>No expenses yet</Text><Text style={styles.emptyText}>Use the Add tab to record your first expense.</Text></View>}
+        ListEmptyComponent={<View style={styles.emptyState}><View style={styles.emptyIcon}><Ionicons color="#4F46E5" name="receipt-outline" size={28} /></View><Text style={styles.emptyTitle}>No expenses yet</Text><Text style={styles.emptyText}>Use the Add tab to record your first expense.</Text></View>}
       />
     </View>
   );
@@ -60,9 +62,9 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F8FAFC", padding: 20 },
-  summary: { backgroundColor: "#4F46E5", borderRadius: 22, padding: 20, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  summary: { backgroundColor: "#4F46E5", borderRadius: 24, padding: 22, flexDirection: "row", justifyContent: "space-between", alignItems: "center", shadowColor: "#312E81", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.2, shadowRadius: 12, elevation: 4 }, summaryAccent: { alignItems: "center", backgroundColor: "rgba(255,255,255,0.16)", borderRadius: 12, height: 40, justifyContent: "center", marginRight: 12, width: 40 },
   summaryLabel: { color: "#C7D2FE", fontSize: 12, fontWeight: "800", letterSpacing: 0.8 }, totalAmount: { color: "#FFFFFF", fontSize: 30, fontWeight: "800", marginTop: 5 },
   countBadge: { alignItems: "center", backgroundColor: "rgba(255,255,255,0.16)", borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10 }, count: { color: "#FFFFFF", fontSize: 20, fontWeight: "800" }, countLabel: { color: "#E0E7FF", fontSize: 11, marginTop: 2 },
   sectionTitle: { color: "#0F172A", fontSize: 18, fontWeight: "800", marginTop: 24, marginBottom: 12 }, list: { paddingBottom: 18 }, emptyList: { flexGrow: 1, justifyContent: "center", paddingBottom: 100 },
-  emptyState: { alignItems: "center", backgroundColor: "#FFFFFF", borderRadius: 18, padding: 28 }, emptyTitle: { color: "#0F172A", fontSize: 18, fontWeight: "800" }, emptyText: { color: "#64748B", fontSize: 14, lineHeight: 21, marginTop: 8, textAlign: "center" },
+  emptyState: { alignItems: "center", backgroundColor: "#FFFFFF", borderRadius: 20, padding: 30, shadowColor: "#0F172A", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 2 }, emptyIcon: { alignItems: "center", backgroundColor: "#EEF2FF", borderRadius: 18, height: 56, justifyContent: "center", marginBottom: 14, width: 56 }, emptyTitle: { color: "#0F172A", fontSize: 18, fontWeight: "800" }, emptyText: { color: "#64748B", fontSize: 14, lineHeight: 21, marginTop: 8, textAlign: "center" },
 });

@@ -74,9 +74,9 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 
 const styles = StyleSheet.create({
   content: { padding: 20, paddingBottom: 40, gap: 16 }, field: { gap: 8 }, label: { color: "#334155", fontSize: 14, fontWeight: "700" },
-  input: { backgroundColor: "#FFFFFF", borderColor: "#CBD5E1", borderWidth: 1, borderRadius: 12, color: "#0F172A", fontSize: 16, paddingHorizontal: 14, paddingVertical: 13 }, notesInput: { height: 96, textAlignVertical: "top" },
+  input: { backgroundColor: "#FFFFFF", borderColor: "#CBD5E1", borderWidth: 1, borderRadius: 14, color: "#0F172A", fontSize: 16, paddingHorizontal: 14, paddingVertical: 13 }, notesInput: { height: 96, textAlignVertical: "top" },
   categories: { flexDirection: "row", flexWrap: "wrap", gap: 8 }, categoryButton: { borderColor: "#CBD5E1", borderWidth: 1, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 8 }, categoryButtonActive: { backgroundColor: "#4F46E5", borderColor: "#4F46E5" },
   categoryText: { color: "#475569", fontSize: 13, fontWeight: "600" }, categoryTextActive: { color: "#FFFFFF" }, error: { color: "#DC2626", fontSize: 12, marginTop: 4 },
-  submitButton: { alignItems: "center", backgroundColor: "#4F46E5", borderRadius: 14, marginTop: 8, padding: 16 }, submitText: { color: "#FFFFFF", fontSize: 16, fontWeight: "800" }, cancelButton: { alignItems: "center", padding: 12 }, cancelText: { color: "#64748B", fontSize: 15, fontWeight: "700" },
+  submitButton: { alignItems: "center", backgroundColor: "#4F46E5", borderRadius: 14, marginTop: 8, minHeight: 54, justifyContent: "center", padding: 16, shadowColor: "#312E81", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.18, shadowRadius: 8, elevation: 3 }, submitText: { color: "#FFFFFF", fontSize: 16, fontWeight: "800" }, cancelButton: { alignItems: "center", padding: 12 }, cancelText: { color: "#64748B", fontSize: 15, fontWeight: "700" },
 });
 
